@@ -8,6 +8,8 @@ local ts = game:GetService("TweenService")
 function module:load(elements, king)
     local sects = {}
 
+    local currentTab
+
     function sects:Section(title, ico)
         local newtab = elements.sectionbtn:Clone()
         newtab.header.Text = title
@@ -16,6 +18,31 @@ function module:load(elements, king)
 
         local newsect = elements.sectioncanvas:Clone()
         newsect.Parent = king.Sections
+
+        newtab.MouseButton1Click:Connect(function()
+            if currentTab == newsect then return end
+
+            if currentTab then
+                ts:Create(
+                    currentTab,
+                    TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {
+                        GroupTransparency = 1
+                    }
+                ):Play()
+                currentTab:TweenPosition(UDim2.new(0.5,0,0.6,0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15)
+            end
+
+            ts:Create(
+                newsect,
+                TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {
+                    GroupTransparency = 0
+                }
+            ):Play()
+            newsect:TweenPosition(UDim2.new(0.5,0,0.5,0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15)
+            currentTab = newsect
+        end)
 
         local scrollingFrame = newsect.ScrollingFrame
 
