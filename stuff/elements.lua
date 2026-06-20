@@ -10,6 +10,18 @@ function module:load(elements, king)
 
     local currentTab
 
+    local function tweenElement(which, isIn)
+        ts:Create(
+            which,
+            TweenInfo.new(
+                0.05
+            ),
+            {
+                BackgroundColor3 = isIn and Color3.fromRGB(39, 39, 39) or Color3.fromRGB(21, 21, 21)
+            }
+        ):Play()
+    end
+
     function sects:Section(title, ico)
         local newtab = elements.sectionbtn:Clone()
         newtab.header.Text = title
@@ -19,6 +31,8 @@ function module:load(elements, king)
         local newsect = elements.sectioncanvas:Clone()
         newsect.Parent = king.sections
 
+        newtab.MouseEnter:Connect(function() tweenElement(newtab, true) end)
+        newtab.MouseLeave:Connect(function() tweenElement(newtab, false) end)
         newtab.MouseButton1Click:Connect(function()
             if currentTab == newsect then return end
 
@@ -41,24 +55,12 @@ function module:load(elements, king)
                     GroupTransparency = 0
                 }
             ):Play()
-            currentTab.Interactable = true
+            newsect.Interactable = true
             newsect:TweenPosition(UDim2.new(0.5,0,0.5,0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15)
             currentTab = newsect
         end)
 
         local scrollingFrame = newsect.ScrollingFrame
-
-        local function tweenElement(which, isIn)
-            ts:Create(
-                which,
-                TweenInfo.new(
-                    0.05
-                ),
-                {
-                    BackgroundColor3 = isIn and Color3.fromRGB(39, 39, 39) or Color3.fromRGB(21, 21, 21)
-                }
-            ):Play()
-        end
 
         local instances = {}
 
