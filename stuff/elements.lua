@@ -31,6 +31,7 @@ function module:load(elements, king)
                     }
                 ):Play()
                 currentTab:TweenPosition(UDim2.new(0.5,0,0.6,0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15)
+                currentTab.Interactable = false
             end
 
             ts:Create(
@@ -40,6 +41,7 @@ function module:load(elements, king)
                     GroupTransparency = 0
                 }
             ):Play()
+            currentTab.Interactable = true
             newsect:TweenPosition(UDim2.new(0.5,0,0.5,0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15)
             currentTab = newsect
         end)
