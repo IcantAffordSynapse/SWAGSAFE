@@ -17,7 +17,7 @@ function module:load(elements, king)
         newtab.Parent = king.tabs
 
         local newsect = elements.sectioncanvas:Clone()
-        newsect.Parent = king.Sections
+        newsect.Parent = king.sections
 
         newtab.MouseButton1Click:Connect(function()
             if currentTab == newsect then return end
