@@ -105,6 +105,11 @@ function module:load(elements, king)
             newtoggle.Parent = scrollingFrame
         end
 
+        function instances:Warning(title)
+            local newwarning = elements.WarningElement:Clone()
+            newwarning.header.Text = "↑ ⚠ " .. title .. " ↑"
+        end
+
         return instances
     end
 
