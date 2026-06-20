@@ -108,6 +108,7 @@ function module:load(elements, king)
         function instances:Warning(title)
             local newwarning = elements.WarningElement:Clone()
             newwarning.header.Text = "↑ ⚠ " .. title .. " ↑"
+            newwarning.Parent = scrollingFrame
         end
 
         return instances
