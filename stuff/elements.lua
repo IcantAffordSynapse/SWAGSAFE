@@ -87,7 +87,7 @@ function module:load(elements, king)
 
             local isTog = default
             statusIndicator.BackgroundColor3 = isTog and Color3.fromRGB(141, 255, 128) or Color3.fromRGB(255, 92, 92)
-            task.defer(cb(isTog))
+            task.defer(cb, isTog)
 
             btn.MouseEnter:Connect(function() tweenElement(btn, true) end)
             btn.MouseLeave:Connect(function() tweenElement(btn, false) end)
@@ -107,7 +107,7 @@ function module:load(elements, king)
     function sects:AddLog(logname, color)
         local newlog = elements.consolelog:Clone()
         newlog.header.Text = logname
-        newlog.header.TextColor3 = color
+        newlog.header.TextColor3 = color or Color3.fromRGB(255,255,255)
 
         newlog.Parent = king.logsframe.ScrollingFrame
     end
