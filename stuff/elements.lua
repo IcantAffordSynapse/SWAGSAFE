@@ -115,7 +115,7 @@ function module:load(elements, king)
             local newexec = elements.ExecElement:Clone()
             local btn = newexec.btn
 
-            btn.ico.Image = details.img
+            btn.ico.Image = getcustomasset(readfile(details.img))
             btn.title.Text = details.title
 
             btn.isup.Text = details.working and "Working" or "Not working"
