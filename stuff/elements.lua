@@ -111,6 +111,30 @@ function module:load(elements, king)
             newwarning.Parent = scrollingFrame
         end
 
+        function instances:Executor(details, cb)
+            local newexec = elements.ExecElement:Clone()
+            local btn = newexec.btn
+
+            btn.ico.Image = details.img
+            btn.title.Text = details.title
+
+            btn.isup.Text = details.working and "Working" or "Not working"
+            btn.isup.TextColor3 = details.working and Color3.fromRGB(141, 255, 128) or Color3.fromRGB(255, 52, 52)
+
+            btn.details.Text = btn.details.Text:format(
+                details.price,
+                details.device,
+                details.sunc
+            )
+
+            btn.MouseEnter:Connect(function() tweenElement(btn, true) end)
+            btn.MouseLeave:Connect(function() tweenElement(btn, false) end)
+
+            btn.MouseButton1Click:Connect(cb)
+
+            newexec.Parent = scrollingFrame
+        end
+
         return instances
     end
 
