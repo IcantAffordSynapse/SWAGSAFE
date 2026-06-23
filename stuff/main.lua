@@ -197,6 +197,7 @@ local elements = elementsModule:load(elementsObjects, mainframe)
 
 local settingsect = elements:Section("Settings", "rbxassetid://88225959356315")
 local executorsect = elements:Section("Executors", "rbxassetid://136054589554766")
+local creditssect = elements:Section("Credits", "rbxassetid://135600210613979")
 
 ---
 -- Listing Support
@@ -243,6 +244,16 @@ settingsect:Label("Logs")
 settingsect:Toggle("Detailed Logs", settings.DetailedLogs, function(v)
     settings.DetailedLogs = v
 end)
+
+---
+-- Credits Handler
+---
+creditssect:Label("Development")
+creditssect:Credit("Esore/Vaehz", "Script + UI")
+creditssect:Credit("_murppp_", "Script")
+
+creditssect:Label("Extra")
+creditssect:Credit("WhatExpsAre.Online", "Executor API")
 
 ---
 -- Executors Handler
