@@ -135,6 +135,14 @@ function module:load(elements, king)
             newexec.Parent = scrollingFrame
         end
 
+        function instances:Credit(user, role)
+            local newcred = elements.CreditElement:Clone()
+            newcred.usr.Text = user
+            newcred.role.Text = role
+
+            newcred.Parent = scrollingFrame
+        end
+
         return instances
     end
 
