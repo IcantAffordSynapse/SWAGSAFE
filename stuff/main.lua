@@ -306,9 +306,35 @@ end
 ---
 -- Universal Protection
 ---
+local GlobalKey: string = "SWAGSAFE|1234567890"
+local OldFuncs: {[number]: function} = {}
+local function LockFunc(FunctionKey: string, ExpectedOutput: any, CustomKey: string | nil): ()
+    local FuncKey: string = CustomKey or GlobalKey
+    local S1: boolean, Func: any = pcall(function() return getfenv()[FunctionKey] end)
+    if S1 and Func and typeof(Func) == "function" then
+        local OldHooked; OldHooked = hookfunction(Func, function(Key, ...)
+            if Key ~= FuncKey then return ExpectedOutput end
+            return OldHooked(...)
+        end)
+        table.insert(OldFuncs, OldHooked)
+    end
+end
+
+local function SafeCallFunc(FunctionKey: string, ...: any): any
+    local S1: boolean, SafeFunc: any = pcall(function() return OldFuncs[FunctionKey] end)
+    if S1 and SafeFunc and typeof(SafeFunc) == "function" then
+        return SafeFunc(GlobalKey, ...)
+    end
+end
+
+rconsoleprint("Locking functions...")
+LockFunc("restorefunction")
+LockFunc("isfunctionhooked", false)
+
+local SuspiciousRemotes = {}
+
 rconsoleprint("Setting up Job ID Spoofer..")
-local oldIndex
-oldIndex = hookmetamethod(game, "__index", function(self, key)
+local oldIndex; oldIndex = hookmetamethod(game, "__index", function(self, key)
     local caller = checkcaller()
 
     if self == game and key == "JobId" then
@@ -330,24 +356,72 @@ oldIndex = hookmetamethod(game, "__index", function(self, key)
     return oldIndex(self, key)
 end)
 
-local oldNamecall
-oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+local DisallowedSignatures = {
+    "project%-reverse"
+}
+
+local CommonTradeKeywords = {
+    "trade", "trading", "tradewindow", "opentrade", "closetrade", "canceltrade", "accepttrade", "decline_trade", "offer", "counter",
+    "finalize", "confirmtrade", "giveitem", "senditem", "receiveitem", "transferitem", "exchangeitem", "give", "gift", "gifting", "donate",
+    "donation", "additem", "removeitem", "addtooffer", "removefromoffer", "setoffer", "pay", "payment", "paid", "tip", "tradeoffer",
+    "itemtrade", "barter", "exchange", "claimreward", "redeemreward", "settradeoffer", "addtradeitem", "removetradeitem", "accepttradeoffer", "confirmtradeoffer",
+    "finalizetrade"
+}
+
+local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
     local method = getnamecallmethod()
+    local args = {...}
 
     if self == game and (method == "HttpGet" or method == "HttpGetAsync") then
-        local args = {...}
         local url = tostring(args[1])
 
-        if url:lower():find("project%-reverse") then
-            elements:AddLog("Attempt to run a known malicious service, Blocked.", Color3.fromRGB(255, 0, 0))
-            elements:AddLog("   > " .. url, Color3.fromRGB(255, 255, 0))
+        for _, Signature in DisallowedSignatures do
+            if string.find(string.lower(url), signature) then
+                elements:AddLog("Attempt to run a known malicious service, Blocked.", Color3.fromRGB(255, 0, 0))
+                elements:AddLog("   > " .. url, Color3.fromRGB(255, 255, 0))
 
-            return nil
+                return nil
+            end
+        end
+    elseif typeof(self) == "Instance" and (method == "InvokeServer" or method == "FireServer" or method == "Fire" or method == "Invoke") then
+        for _, Keyword in CommonTradeKeywords do
+            if string.find(string.lower(self.Name), Keyword) then
+                elements:AddLog("Attempt to fire a trade remote, Blocked.", Color3.fromRGB(255, 0, 0))
+                elements:AddLog("   > " .. url, Color3.fromRGB(255, 255, 0))
+
+                return nil
+            end
         end
     end
 
     return oldNamecall(self, ...)
 end)
+
+for _, Object in game:QueryDescendants("ModuleScript") do
+    --murpy didnt finish this yet but its scanner for networking modules
+end
+
+if getfenv()["request"] then --this shouldnt contribute to the support warning because if we cant use it, the stealer cant
+    local OldRequest; OldRequest = hookfunction(request, function(Args)
+        for _, Signature in DisallowedSignatures do
+            if Args.Url and Args.Url:lower():find(Signature) then
+                return "404 Not Found"
+            end
+        end
+        return OldRequest(Args)
+    end)
+end
+
+if getfenv()["create_comm_channel"] then --same here
+    local OldCCC; OldCCC = hookfunction(create_comm_channel, function(Key)
+        local BEID, BEI = OldCCC()
+        if Key ~= GlobalKey then
+            table.insert(SuspiciousRemotes, BEI)
+            return BEID, {OldCCC()}[2]
+        end
+        return BEID, BEI
+    end)
+end
 
 ---
 -- Game Protection
