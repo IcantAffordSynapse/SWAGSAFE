@@ -147,9 +147,15 @@ function module:load(elements, king)
     end
 
     function sects:AddLog(logname, color)
+        local when = os.date("%H:%M:%S")
         local newlog = elements.consolelog:Clone()
-        newlog.header.Text = logname
+        newlog.header.Text = string.format("[%s]: %s", when, logname)
         newlog.header.TextColor3 = color or Color3.fromRGB(255,255,255)
+
+        table.insert(getgenv().savedLogs, {
+            Time = when,
+            Message = logname
+        })
 
         newlog.Parent = king.logsframe.ScrollingFrame
     end
