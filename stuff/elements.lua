@@ -158,6 +158,14 @@ function module:load(elements, king)
         })
 
         newlog.Parent = king.logsframe.ScrollingFrame
+
+        task.defer(function()
+            local scrollingFrame = king.logsframe.ScrollingFrame
+            scrollingFrame.CanvasPosition = Vector2.new(
+                0,
+                scrollingFrame.AbsoluteCanvasSize.Y
+            )
+        end)
     end
 
     return sects
