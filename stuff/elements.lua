@@ -22,6 +22,39 @@ function module:load(elements, king)
         ):Play()
     end
 
+    function sects:ExtraSect()
+        local newtab = elements.ExtrasElement:Clone()
+        newtab.Parent = king.tabs
+
+        local tabs = {}
+
+        function tabs:Sect(title, ico, cb)
+            local newbtn = elements.ExtrasBtnElement:Clone()
+            newbtn.ico.Image = ico
+            
+            newbtn.MouseButton1Click:Connect(cb)
+
+            newbtn.Parent = newtab
+        end
+
+        return tabs
+    end
+
+    function sects:AddRemote(title, default, owner, cb)
+        local newremote = elements.RemoteElement:Clone()
+        newremote.btn.remoteName.Text = title
+        newremote.btn.blockedLabel.Text = default and "Blocked" or "Allowed"
+
+        local isblocked = default
+
+        newremote.MouseButton1Click:Connect(function()
+            isblocked = not isblocked
+            newremote.btn.blockedLabel.Text = isblocked and "Blocked" or "Allowed"
+        end)
+
+        newremote.Parent = owner
+    end
+
     function sects:Section(title, ico)
         local newtab = elements.sectionbtn:Clone()
         newtab.header.Text = title
