@@ -50,6 +50,7 @@ function module:load(elements, king)
         newremote.MouseButton1Click:Connect(function()
             isblocked = not isblocked
             newremote.btn.blockedLabel.Text = isblocked and "Blocked" or "Allowed"
+            cb(isblocked)
         end)
 
         newremote.Parent = owner
