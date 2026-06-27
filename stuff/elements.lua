@@ -47,7 +47,7 @@ function module:load(elements, king)
 
         local isblocked = default
 
-        newremote.MouseButton1Click:Connect(function()
+        newremote.btn.MouseButton1Click:Connect(function()
             isblocked = not isblocked
             newremote.btn.blockedLabel.Text = isblocked and "Blocked" or "Allowed"
             cb(isblocked)
